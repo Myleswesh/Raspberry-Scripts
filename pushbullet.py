@@ -5,7 +5,7 @@ from pushbullet import Pushbullet
 
 api_key = 'MyApiKeyHere'
 pb = Pushbullet(api_key)     
-device_to  = pb.devices[0]    # 0 = Galaxy S6, 1 = Nexus 10, none = All Devices
+device_to  = pb.devices[0]    # 0 = MyPhone, 1 = MyTablet, none = All Devices
                            
 def reboot():
     subject = '[Raspberry] Reboot'
