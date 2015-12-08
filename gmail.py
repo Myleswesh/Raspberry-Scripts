@@ -1,4 +1,4 @@
-# coding: utf8
+# -*- coding: UTF-8 -*-
 # Library : https://github.com/charlierguo/gmail/
 
 import gmail
