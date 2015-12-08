@@ -1,4 +1,4 @@
-# coding: utf8
+# -*- coding: UTF-8 -*-
 # Library : https://pypi.python.org/pypi/pushbullet.py
 
 from pushbullet import Pushbullet
