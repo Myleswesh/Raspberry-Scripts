@@ -1,0 +1,44 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+import sqlite3
+import subprocess
+import time
+from datetime import datetime
+
+def checkIfHome(ip):
+        output = subprocess.Popen(["ping","-c", "1", ip],stdout = subprocess.PIPE,shell=False)
+        check = output.communicate()[0]
+        check = output.returncode
+        return check
+
+conn = sqlite3.connect('raspberry.db')
+cursor = conn.cursor()
+cursor.execute("""
+    CREATE TABLE IF NOT EXISTS whoshome(
+        id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
+        name TEXT,
+        status INTEGER,
+        created DATETIME)
+""")
+
+try:
+    while True:
+        name = 'Amy'
+        check  = checkIfHome('YOUR.IP.ADDRESS.PLEASE')
+        today = datetime.today()
+        now   = today.strftime('%H:%M')
+        if check == 0:
+            cursor.execute("""INSERT INTO whoshome(name, status, created) VALUES(?, ?, ?)""", (name, 1, now))
+            conn.commit()
+            print (" "+now+" - Save online...")
+            time.sleep(60)
+        else:
+            cursor.execute("""INSERT INTO whoshome(name, status, created) VALUES(?, ?, ?)""", (name, 0, now))
+            conn.commit()
+            print (" "+now+" - Save offline...")
+            time.sleep(60)
+
+except KeyboardInterrupt:
+        conn.close()
+        print "Exit"
