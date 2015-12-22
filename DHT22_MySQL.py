@@ -12,7 +12,7 @@ while True:
 		created = str(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
 		print 'Save '+created+': Humidity: '+format(humidity)+' Temperature: '+format(temperature)+''
 		cur.execute("INSERT INTO sensors(temp, humidity, created) VALUES ('" + format(temperature) + "', '" + format(humidity) + "', now() ) ")
-	time.sleep(50)
+	time.sleep(3600)
 
 # TABLE `sensors` (
 #  `id` int(11) NOT NULL AUTO_INCREMENT,
