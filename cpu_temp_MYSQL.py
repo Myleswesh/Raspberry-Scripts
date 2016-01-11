@@ -11,12 +11,12 @@ cur = con.cursor()
 def tempformat(value):
     return value.replace("temp=", "").replace("'C\n", "")
 
-with con:
-    while True:
+while True:
+    with con:
         value = os.popen('/opt/vc/bin/vcgencmd measure_temp').readline()
         created = str(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
         print 'Save '+created+': Temp CPU : '+tempformat(value)+''
 
         cur.execute("INSERT INTO cpu(temp, created) VALUES ('" + tempformat(value) + "', now() ) ")
-        con.commit()
         time.sleep(5)
+
