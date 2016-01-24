@@ -1,4 +1,4 @@
-from ttrss.client import TTRClient
+from ttrss.client import TTRClient      # https://github.com/Vassius/ttrss-python
 import RPi.GPIO as GPIO
 import time
 
