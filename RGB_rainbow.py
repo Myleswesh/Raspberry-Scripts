@@ -1,69 +1,43 @@
-import random, time
+#!/usr/bin/python
+
 import RPi.GPIO as GPIO
 import colorsys
- 
-RUNNING = True
-GPIO.setmode(GPIO.BCM)
+import time
+
+red = 23                    
+green = 22                  
+blue = 27                   
+
 GPIO.setwarnings(False)
-red = 17
-green = 27
-blue = 22
- 
+GPIO.setmode(GPIO.BCM)
+
 GPIO.setup(red, GPIO.OUT)
 GPIO.setup(green, GPIO.OUT)
 GPIO.setup(blue, GPIO.OUT)
 
-
-Freq = 100
- 
-RED = GPIO.PWM(red, Freq)
-RED.start(100)
-GREEN = GPIO.PWM(green, Freq)
-GREEN.start(100)
-BLUE = GPIO.PWM(blue, Freq)
-BLUE.start(100)
-
-outval = 128
-
-def wheel_color(position):
-    """Get color from wheel value (0 - 384)."""
-    
-    if position < 0:
-        position = 0
-    if position > 384:
-        position = 384
-
-    if position < 128:
-        r = 127 - position % 128
-        g = position % 128
-        b = 0
-    elif position < 256:
-        g = 127 - position % 128
-        b = position % 128
-        r = 0
-    else:
-        b = 127 - position % 128
-        r = position % 128
-        g = 0
-
-    return r, g, b
+pr = GPIO.PWM(red, 100)     
+pg = GPIO.PWM(green, 100)    
+pb = GPIO.PWM(blue, 100)    
+pr.start(0)               
+pg.start(0)
+pb.start(0)
 
 try:
-   while(True):
-      for pos in range(0,385):
-         r, g, b = wheel_color(pos)
-         print (r, g, b)
-         percenttestr = (r/128.0)*100.0
-         percenttestg = (g/128.0)*100.0
-         percenttestb = (b/128.0)*100.0
-         print (percenttestr)
-         print (percenttestg)
-         print (percenttestb)
-         RED.ChangeDutyCycle(percenttestr)
-         GREEN.ChangeDutyCycle(percenttestg)
-         BLUE.ChangeDutyCycle(percenttestb)
-         time.sleep(0.1)
+    while True:
+        steps = 200
+        for h in range(0, steps):
+            hue = h/steps
+            rgb = colorsys.hsv_to_rgb(hue, 1, 1)
 
-         
+            pr.ChangeDutyCycle(rgb[0]*100)
+            pg.ChangeDutyCycle(rgb[1]*100)
+            pb.ChangeDutyCycle(rgb[2]*100)
+
+            time.sleep(0.05)
+
 except KeyboardInterrupt:
-   GPIO.cleanup()
+    pr.stop()
+    pg.stop()
+    pb.stop()
+    GPIO.cleanup()
+ 
