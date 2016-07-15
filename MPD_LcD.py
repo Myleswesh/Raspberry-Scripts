@@ -112,11 +112,18 @@ try:
         client.idletimeout = None
         client.connect('localhost', 6600)
 
+        artist = client.currentsong()['artist']
+        title = client.currentsong()['title']
+
+        lcd_byte(0x01, LCD_CMD)
+        lcd_string(artist, LCD_LINE_1)
+        lcd_string(title, LCD_LINE_2)
+
         if (GPIO.input(PREV) == True):
             client.previous()
             lcd_byte(0x01, LCD_CMD)
-            lcd_string(client.currentsong()['artist'], LCD_LINE_1)
-            lcd_string(client.currentsong()['title'], LCD_LINE_2)
+            lcd_string(artist, LCD_LINE_1)
+            lcd_string(title, LCD_LINE_2)
 
         if (GPIO.input(PAUSE) == True):
             client.pause()
@@ -124,12 +131,13 @@ try:
         if (GPIO.input(NEXT) == True):
             client.next()
             lcd_byte(0x01, LCD_CMD)
-            lcd_string(client.currentsong()['artist'], LCD_LINE_1)
-            lcd_string(client.currentsong()['title'], LCD_LINE_2)
+            lcd_string(artist, LCD_LINE_1)
+            lcd_string(title, LCD_LINE_2)
 
-    sleep(1)
+        sleep(4)
 
 except KeyboardInterrupt:
     lcd_byte(0x01, LCD_CMD)
     lcd_string(" Script Stopped", LCD_LINE_1)
     GPIO.cleanup()
+    system("mpc pause")
