@@ -1,9 +1,9 @@
 #!/usr/bin/python
 
 import RPi.GPIO as GPIO
-from time import sleep
 from mpd import MPDClient
-import os
+from time import sleep
+from os import system
 
 LCD_RS = 25
 LCD_E  = 24
@@ -103,7 +103,7 @@ lcd_init()
 lcd_string('  Raspberry Pi  ', LCD_LINE_1)
 lcd_string('     Player     ', LCD_LINE_2)
 sleep(4)
-os.system("mpc play")
+system("mpc play")
 
 try:
     while True:
@@ -131,5 +131,5 @@ try:
 
 except KeyboardInterrupt:
     lcd_byte(0x01, LCD_CMD)
-    lcd_string("Script Stopped !", LCD_LINE_1)
+    lcd_string(" Script Stopped", LCD_LINE_1)
     GPIO.cleanup()
