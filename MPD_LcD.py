@@ -76,10 +76,6 @@ def update_lcd():
 
     old_data = data
 
-
-# Infinite Loop
-
-
     while True:
         today = datetime.today()
         now = today.strftime('%Y-%m-%d %H:%M')
@@ -440,63 +436,65 @@ GPIO.add_event_detect(BUTTON_VUP, GPIO.FALLING, callback=vup_pressed, bouncetime
 GPIO.add_event_detect(BUTTON_VDN, GPIO.FALLING, callback=vdn_pressed, bouncetime=bounce_time)
 GPIO.add_event_detect(BUTTON_STOP, GPIO.FALLING, callback=stop_pressed, bouncetime=bounce_time)
 
-while (1):
-    client.send_idle()
-    state = client.fetch_idle()
+# Infinite Loop
 
-    if (state[0] == 'mixer'):
-        data['volume'] = int(client.status()['volume'])
-        data_changed_vol = True
+try:
+    while (1):
+        client.send_idle()
+        state = client.fetch_idle()
 
-    if (state[0] == 'player'):
-        try:
-            station = client.currentsong()['name']
-        except KeyError:
-            station = ''
+        if (state[0] == 'mixer'):
+            data['volume'] = int(client.status()['volume'])
+            data_changed_vol = True
 
-        try:
-            title = client.currentsong()['title']
-        except KeyError:
-            title = ''
+        if (state[0] == 'player'):
+            try:
+                station = client.currentsong()['name']
+            except KeyError:
+                station = ''
 
-        try:
-            artist = client.currentsong()['artist']
-        except KeyError:
-            artist = ''
+            try:
+                title = client.currentsong()['title']
+            except KeyError:
+                title = ''
 
-        if (station != ''):
-            data['type'] = 1
+            try:
+                artist = client.currentsong()['artist']
+            except KeyError:
+                artist = ''
 
-            lst = [word[0].upper() + word[1:] for word in station.split()]
-            data['artist'] = " ".join(lst)
+            if (station != ''):
+                data['type'] = 1
 
-            lst = [word[0].upper() + word[1:] for word in title.split()]
-            data['title'] = " ".join(lst)
+                lst = [word[0].upper() + word[1:] for word in station.split()]
+                data['artist'] = " ".join(lst)
 
-        else:  # file
-            data['type'] = 0
+                lst = [word[0].upper() + word[1:] for word in title.split()]
+                data['title'] = " ".join(lst)
 
-            lst = [word[0].upper() + word[1:] for word in artist.split()]
-            data['artist'] = " ".join(lst)
+            else:  # file
+                data['type'] = 0
 
-            lst = [word[0].upper() + word[1:] for word in title.split()]
-            data['title'] = " ".join(lst)
+                lst = [word[0].upper() + word[1:] for word in artist.split()]
+                data['artist'] = " ".join(lst)
 
-        if (client.status()['state'] == 'play'):
-            data['state'] = 1
+                lst = [word[0].upper() + word[1:] for word in title.split()]
+                data['title'] = " ".join(lst)
 
-        elif (client.status()['state'] == 'stop'):
-            data['state'] = 0
+            if (client.status()['state'] == 'play'):
+                data['state'] = 1
 
-        elif (client.status()['state'] == 'pause'):
-            data['state'] = 2
+            elif (client.status()['state'] == 'stop'):
+                data['state'] = 0
 
-        data_changed = True
+            elif (client.status()['state'] == 'pause'):
+                data['state'] = 2
 
-client.disconnect()
+            data_changed = True
 
-lcd_t.join()
-mpdping_t.join()
-
-# Exit
-sys.exit(0)
+except KeyboardInterrupt:
+    GPIO.cleanup()
+    client.disconnect()
+    lcd_t.join()
+    mpdping_t.join()
+    sys.exit(0)
